@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "commonName": "example.com",
+    "organization": "Example Org",
+    "country": "US",
+    "status": "Active",
+    "ca": "CA1"
+  },
+  {
+    "id": 2,
+    "commonName": "test.com",
+    "organization": "Test Org",
+    "country": "UK",
+    "status": "Revoked",
+    "ca": "CA2"
+  },
+  {
+    "id": 3,
+    "commonName": "mywebsite.org",
+    "organization": "My Website Org",
+    "country": "CA",
+    "status": "Active",
+    "ca": "CA1"
+  },
+  {
+    "id": 4,
+    "commonName": "sample.net",
+    "organization": "Sample Org",
+    "country": "AU",
+    "status": "Revoked",
+    "ca": "CA3"
+  },
+  {
+    "id": 5,
+    "commonName": "demo.io",
+    "organization": "Demo Org",
+    "country": "DE",
+    "status": "Active",
+    "ca": "CA2"
+  }
+]
