@@ -7,10 +7,25 @@
 		country: ''
 	};
 
-	function handleCreateCertificate() {
-		//const ca = get(selectedCA);
-		//console.log(`Creating certificate for CA: ${ca}`, certificateData);
-		// Add logic to create the certificate using the selected CA
+	async function handleCreateCertificate() {
+		try {
+			const response = await fetch('api/certificates', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(certificateData)
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to create certificate');
+			}
+
+			const result = await response.json();
+			console.log('Certificate created successfully:', result);
+		} catch (error) {
+			console.error('Error creating certificate:', error);
+		}
 	}
 </script>
 
