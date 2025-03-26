@@ -1,11 +1,28 @@
 <script>
-	import dummyCertificates from '$lib/stores/dummy-certificates.json';
+	import { onMount } from 'svelte';
 	import CertificateDetail from './CertificateDetail.svelte';
 
-	let certificates = dummyCertificates;
+	let certificates = $state([]);
 	let selectedCertificate = $state(null);
 	let sortColumn = $state('');
 	let sortDirection = $state('asc');
+
+	async function fetchCertificates() {
+		try {
+			const response = await fetch('/api/certificates');
+			if (!response.ok) {
+				throw new Error('Failed to fetch certificates');
+			}
+			const data = await response.json();
+			certificates = data;
+		} catch (error) {
+			console.error('Error fetching certificates:', error);
+		}
+	}
+
+	onMount(() => {
+		fetchCertificates();
+	}); 
 
 	function sortCertificates() {
 		if (sortColumn) {
