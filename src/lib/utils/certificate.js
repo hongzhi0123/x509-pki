@@ -1,7 +1,6 @@
 import { Crypto } from "@peculiar/webcrypto";
 import * as x509 from "@peculiar/x509";
-import { AsnConvert } from "@peculiar/asn1-schema";
-import * as asn1js from "asn1js";
+import { createQCStatements, QCStatementsExtension } from "./qcStatement/qcStatementsExtension";
 
 const crypto = new Crypto();
 x509.cryptoProvider.set(crypto); // Set crypto provider
@@ -45,7 +44,8 @@ export async function createCertificate(caCert, keyPair) {
                 new x509.AuthorityInfoAccessExtension({ ocsp: "http://example.com/ocsp" }),
 
                 // QCStatements (custom extension)
-                new x509.Extension("1.3.6.1.5.5.7.1.3", false, createQcStatementsExtension()),
+                // new Psd2RolesExtension({rolesOfPSP: ["PSP_AI", "PSP_PI"], NCAId: "PSDDE_XXX", NCAName: "BAFIN"}),
+                new QCStatementsExtension(createQCStatements()),
 
                 // Authority Key Identifier (link to CA)
                 new x509.AuthorityKeyIdentifierExtension(
@@ -69,15 +69,15 @@ export async function createCertificate(caCert, keyPair) {
     }
 }
 
-function createQcStatementsExtension() {
-    const qcStatements = new asn1js.Sequence({
-        value: [
-            new asn1js.Sequence({
-                value: [
-                    new asn1js.ObjectIdentifier({ value: "1.2.3.4.5" }), // Replace with your OID
-                ],
-            }),
-        ],
-    });
-    return AsnConvert.serialize(qcStatements);
-}
+// function createQcStatementsExtension() {
+//     const qcStatements = new asn1js.Sequence({
+//         value: [
+//             new asn1js.Sequence({
+//                 value: [
+//                     new asn1js.ObjectIdentifier({ value: "1.2.3.4.5" }), // Replace with your OID
+//                 ],
+//             }),
+//         ],
+//     });
+//     return AsnConvert.serialize(qcStatements);
+// }
