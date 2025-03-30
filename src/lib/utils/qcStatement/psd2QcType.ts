@@ -15,6 +15,12 @@ export enum Psd2RoleType {
     PSP_IC = id_etsi_qcs_psd2_psp_ic,
 }
 
+// Helper function to get enum name
+function getPsd2RoleName(role: Psd2RoleType): string {
+    return Object.keys(Psd2RoleType)
+        .find(key => Psd2RoleType[key as keyof typeof Psd2RoleType] === role) || "UNKNOWN";
+}
+
 @AsnType({ type: AsnTypeTypes.Sequence })
 export class Psd2Role {
     @AsnProp({ type: AsnPropTypes.ObjectIdentifier })
@@ -28,6 +34,9 @@ export class Psd2Role {
 
     constructor(params: Partial<Psd2Role> = {}) {
         Object.assign(this, params);
+        if (!this.roleOfPspName) {
+            this.roleOfPspName = getPsd2RoleName(this.roleOfPsp);
+        }
     }
 }
 

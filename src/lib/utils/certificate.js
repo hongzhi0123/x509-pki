@@ -68,16 +68,3 @@ export async function createCertificate(caCert, keyPair) {
         // res.status(500).json({ error: 'Certificate creation failed' });
     }
 }
-
-// function createQcStatementsExtension() {
-//     const qcStatements = new asn1js.Sequence({
-//         value: [
-//             new asn1js.Sequence({
-//                 value: [
-//                     new asn1js.ObjectIdentifier({ value: "1.2.3.4.5" }), // Replace with your OID
-//                 ],
-//             }),
-//         ],
-//     });
-//     return AsnConvert.serialize(qcStatements);
-// }

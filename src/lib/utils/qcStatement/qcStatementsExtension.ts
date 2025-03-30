@@ -49,12 +49,10 @@ export function createQCStatements(): QCStatements {
     const qcPsd2Roles = new QcPsd2RolesInfo({
         psd2Roles: new Psd2RolesList([
             new Psd2Role({
-                roleOfPsp: Psd2RoleType.PSP_PI,
-                roleOfPspName: "PSP_PI"
+                roleOfPsp: Psd2RoleType.PSP_PI
             }),
             new Psd2Role({
-                roleOfPsp: Psd2RoleType.PSP_AI,
-                roleOfPspName: "PSP_AI"
+                roleOfPsp: Psd2RoleType.PSP_AI
             })            
         ]),
         ncaId: 'XX-DFSA',
