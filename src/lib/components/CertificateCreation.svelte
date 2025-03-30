@@ -4,8 +4,26 @@
 	let certificateData = {
 		commonName: '',
 		organization: '',
-		country: ''
+		organizationId: '',
+		country: '',
+		tppRoles: [] // Added TPP Roles
 	};
+
+	const tppRolesOptions = [
+		{ value: 'PSP_AS', label: 'PSP_AS: Account Servicing' },
+		{ value: 'PSP_PI', label: 'PSP_PI: Payment Initiation' },
+		{ value: 'PSP_AI', label: 'PSP_AI: Account Information' },
+		{ value: 'PSP_IC', label: 'PSP_IC: Issuing of card-based payment instruments' }
+	];
+
+	function handleCheckboxChange(event) {
+		const { value, checked } = event.target;
+		if (checked) {
+			certificateData.tppRoles = [...certificateData.tppRoles, value];
+		} else {
+			certificateData.tppRoles = certificateData.tppRoles.filter(role => role !== value);
+		}
+	}
 
 	async function handleCreateCertificate() {
 		try {
@@ -33,18 +51,33 @@
 	<h1>Create Certificate</h1>
 
 	<form on:submit|preventDefault={handleCreateCertificate}>
-		<div>
+		<div class="form-group">
 			<label for="commonName">Common Name:</label>
 			<input id="commonName" bind:value={certificateData.commonName} required />
 		</div>
-		<div>
+		<div class="form-group">
 			<label for="organization">Organization:</label>
 			<input id="organization" bind:value={certificateData.organization} required />
 		</div>
-		<div>
+		<div class="form-group">
+			<label for="organizationId">Organization Identifier:</label>
+			<input id="organizationId" bind:value={certificateData.organizationId} required />
+		</div>		
+		<div class="form-group">
 			<label for="country">Country:</label>
 			<input id="country" bind:value={certificateData.country} required />
 		</div>
+
+		<div class="form-group">
+			<label>TPP Roles:</label>
+			{#each tppRolesOptions as role}
+				<div class="checkbox-container">
+					<input type="checkbox" id={role.value} value={role.value} on:change={handleCheckboxChange} />
+					<label for={role.value}>{role.label}</label>
+				</div>
+			{/each}
+		</div>
+
 		<button type="submit">Create</button>
 	</form>
 </main>
@@ -59,7 +92,9 @@
 		background-color: #f9f9f9;
 	}
 
-	form div {
+	.form-group {
+		display: flex;
+		flex-direction: column;
 		margin-bottom: 15px;
 	}
 
@@ -69,10 +104,20 @@
 		font-weight: bold;
 	}
 
-	form input {
-		width: 100%;
+	form input[type="text"] {
+		width: calc(100% - 22px); /* Adjust width to align with checkbox */
 		padding: 8px;
 		box-sizing: border-box;
+	}
+
+	.checkbox-container {
+		display: flex;
+		align-items: center;
+	}
+
+	.checkbox-container input[type="checkbox"] {
+		width: auto;
+		margin-right: 10px;
 	}
 
 	form button {

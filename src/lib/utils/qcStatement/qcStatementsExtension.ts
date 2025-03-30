@@ -20,7 +20,7 @@ export class QCStatementsExtension extends Extension {
     }
 }
 
-export function createQCStatements(): QCStatements {
+export function createQCStatements(psd2Roles: string[]): QCStatements {
     // Define QCStatement for qcCompliance
     const qcComplianceStatement = new QCStatement();
     qcComplianceStatement.statementId = id_etsi_qcs_qcCompliance; // ETSI QC Compliance (0.4.0.1862.1.1)
@@ -47,14 +47,10 @@ export function createQCStatements(): QCStatements {
     qcPDSStatement.statementInfo = AsnConvert.serialize(new PdsLocations([pds])); // Example value
 
     const qcPsd2Roles = new QcPsd2RolesInfo({
-        psd2Roles: new Psd2RolesList([
-            new Psd2Role({
-                roleOfPsp: Psd2RoleType.PSP_PI
-            }),
-            new Psd2Role({
-                roleOfPsp: Psd2RoleType.PSP_AI
-            })            
-        ]),
+        psd2Roles: new Psd2RolesList(psd2Roles.map(
+            role => new Psd2Role({
+                roleOfPsp: Psd2RoleType[role.toUpperCase() as keyof typeof Psd2RoleType]
+        }))),
         ncaId: 'XX-DFSA',
         ncaName: 'Dummy Financial Supervision Authority'
     });

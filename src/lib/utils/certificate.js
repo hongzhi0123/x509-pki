@@ -21,12 +21,12 @@ export async function generateKey() {
     return keyPair;
 }
 
-export async function createCertificate(caCert, keyPair) {
+export async function createCertificate(newCertReq, caCert, keyPair) {
     try {
         // Create certificate signed by CA
         const cert = await x509.X509CertificateGenerator.create({
-            serialNumber: "01",
-            subject: "CN=End Entity Certificate", // Your subject
+            serialNumber: newCertReq.id.toString(),
+            subject: `C=${newCertReq.country}, O=${newCertReq.organization}, CN=${newCertReq.commonName}, 2.5.4.97=${newCertReq.organizationId}`, // Your subject
             notBefore: new Date(),
             notAfter: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
             signingAlgorithm: caCert.cert.publicKey.algorithm, // Use CA's algorithm
@@ -45,7 +45,7 @@ export async function createCertificate(caCert, keyPair) {
 
                 // QCStatements (custom extension)
                 // new Psd2RolesExtension({rolesOfPSP: ["PSP_AI", "PSP_PI"], NCAId: "PSDDE_XXX", NCAName: "BAFIN"}),
-                new QCStatementsExtension(createQCStatements()),
+                new QCStatementsExtension(createQCStatements(newCertReq.tppRoles)),
 
                 // Authority Key Identifier (link to CA)
                 new x509.AuthorityKeyIdentifierExtension(

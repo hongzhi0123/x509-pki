@@ -16,7 +16,7 @@ export async function POST({ request }) {
 
     const caCert = getCA();
     const keyPair = await generateKey();
-    const newCertificate = await createCertificate(caCert, keyPair);
+    const newCertificate = await createCertificate(newCertReq, caCert, keyPair);
 
     return json({ message: 'Certificate created successfully', certificate: newCertificate});
 }
