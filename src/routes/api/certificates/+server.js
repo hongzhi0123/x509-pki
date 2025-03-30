@@ -21,6 +21,7 @@ export async function POST({ request }) {
     
     const newCertData = await createCertificate(newCertReq, caCert);
 
+    certificates.push(newCertData);
     await certStore.add(newCertData);
 
     return json({ message: 'Certificate created successfully' });
