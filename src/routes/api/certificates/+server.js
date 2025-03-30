@@ -1,22 +1,27 @@
 import { json } from "@sveltejs/kit";
-import dummyCertificates from '$lib/stores/dummy-certificates.json';
-import { createCertificate, generateKey } from "$lib/utils/certificate.js";
+import { createCertificate } from "$lib/utils/certificate.js";
 import { getCA, loadCA } from "$lib/utils/ca.js";
+import { DataStore } from "$lib/utils/dataStore.js";
 
 // Load CA when the server starts
 await loadCA();
 
+const certStore = new DataStore();
+const certificates = await certStore.getAll();
+
 export async function GET() {
-    return json(dummyCertificates);
+    return json(certificates);
 }
 
 export async function POST({ request }) {
     const newCertReq = await request.json();
-    newCertReq.id = dummyCertificates.length + 1; // Assign a new ID
+    newCertReq.id = certificates.length + 1; // Assign a new ID
 
     const caCert = getCA();
-    const keyPair = await generateKey();
-    const newCertificate = await createCertificate(newCertReq, caCert, keyPair);
+    
+    const newCertData = await createCertificate(newCertReq, caCert);
 
-    return json({ message: 'Certificate created successfully', certificate: newCertificate});
+    await certStore.add(newCertData);
+
+    return json({ message: 'Certificate created successfully' });
 }

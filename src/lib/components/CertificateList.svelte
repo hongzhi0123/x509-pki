@@ -83,6 +83,12 @@
 						<span class="sort-indicator">{sortDirection === 'asc' ? '▲' : '▼'}</span>
 					{/if}
 				</th>
+				<th class="sortable" onclick={() => handleSort('organizationId')}>
+					Organization ID
+					{#if sortColumn === 'organizationId'}
+						<span class="sort-indicator">{sortDirection === 'asc' ? '▲' : '▼'}</span>
+					{/if}
+				</th>
 				<th class="sortable" onclick={() => handleSort('country')}>
 					Country
 					{#if sortColumn === 'country'}
@@ -104,6 +110,7 @@
 					<td>{certificate.id}</td>
 					<td>{certificate.commonName}</td>
 					<td>{certificate.organization}</td>
+					<td>{certificate.organizationId}</td>
 					<td>{certificate.country}</td>
 					<td>{certificate.status}</td>
 					<td>

@@ -49,7 +49,10 @@
     <p><strong>ID:</strong> {selectedCertificate.id}</p>
     <p><strong>Common Name:</strong> {selectedCertificate.commonName}</p>
     <p><strong>Organization:</strong> {selectedCertificate.organization}</p>
+    <p><strong>Organization ID:</strong> {selectedCertificate.organizationId}</p>
     <p><strong>Country:</strong> {selectedCertificate.country}</p>
     <p><strong>Status:</strong> {selectedCertificate.status}</p>
+    <p><strong>Not Before:</strong> {selectedCertificate.notBefore}</p>
+    <p><strong>Not After:</strong> {selectedCertificate.notAfter}</p>
   </div>
 </div>
