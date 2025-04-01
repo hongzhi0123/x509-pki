@@ -1,10 +1,8 @@
 import { json } from "@sveltejs/kit";
 import { createCertificate } from "$lib/utils/certificate.js";
-import { getCA, loadCA } from "$lib/utils/ca.js";
+import { getCA } from "$lib/utils/ca.js";
 import { DataStore } from "$lib/utils/dataStore.js";
 
-// Load CA when the server starts
-await loadCA();
 
 const certStore = new DataStore();
 const certificates = await certStore.getAll();

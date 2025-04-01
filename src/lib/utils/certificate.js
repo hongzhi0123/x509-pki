@@ -39,7 +39,7 @@ export async function createCertificate(newCertReq, caCert) {
                 new x509.BasicConstraintsExtension(false, undefined, true),
 
                 // CRL Distribution Points
-                new x509.CRLDistributionPointsExtension(["http://example.com/crl.crl"]),
+                new x509.CRLDistributionPointsExtension(["http://localhost:5173/api/crl/1"]),
 
                 // OCSP (Authority Information Access)
                 new x509.AuthorityInfoAccessExtension({ ocsp: "http://example.com/ocsp" }),
