@@ -5,14 +5,16 @@ import { DataStore } from "$lib/utils/dataStore.js";
 
 
 const certStore = new DataStore();
-const certificates = await certStore.getAll();
+// const certificates = await certStore.getAll();
 
 export async function GET() {
+    const certificates = await certStore.getAll();
     return json(certificates);
 }
 
 export async function POST({ request }) {
     const newCertReq = await request.json();
+    const certificates = await certStore.getAll();
     newCertReq.id = certificates.length + 1; // Assign a new ID
 
     const caCert = getCA();
