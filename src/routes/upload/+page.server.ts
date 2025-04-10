@@ -1,8 +1,5 @@
 import { fail } from '@sveltejs/kit';
 import { parseUploadedCerts } from '$lib/utils/certificate';
-import { writeFileSync } from 'fs';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
 
 export const actions = {
     default: async ({ request }) => {

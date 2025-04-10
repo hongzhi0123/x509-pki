@@ -1,6 +1,10 @@
 import { X509Certificate, cryptoProvider, PemConverter } from "@peculiar/x509";
 import { Crypto } from "@peculiar/webcrypto";
 import cas from '$lib/stores/cas.json';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { Low } from 'lowdb';
+import { JSONFile } from 'lowdb/node';
 
 export class CACert {
     id: number;
@@ -26,6 +30,23 @@ async function convertPrivateKey(keyPem: string) {
     );
 }
 
+let serialDB = undefined
+
+export async function loadCASerial() {
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const filePath = path.join(__dirname, './data/caSerial.json');
+    const adapter = new JSONFile(filePath);
+    serialDB = new Low(adapter, {});
+    await serialDB.read();
+}
+
+export async function getCASerial(id) {
+    const item = serialDB.data.cas.find(item => item.id === id);
+    item.serial++;
+    await serialDB.write();
+    return item.serial;
+}
+
 export async function loadCA() {
     await caList.map(async ca => {
         const cert = new X509Certificate(ca.cert);
@@ -45,4 +66,15 @@ export function getCAById(id: number) : CACert {
 
 export function getCAByCn(cn: string) : CACert {
     return caCerts.find(ca => ca.cn === cn);
+}
+
+export async function getCAs(): Promise<any[]> {
+    if (caCerts.length === 0) {
+        await loadCA();
+    }
+
+    return caCerts.map(ca => ({
+        id: ca.id,
+        name: ca.name
+    }));
 }

@@ -4,6 +4,7 @@
 		organization: '',
 		organizationId: '',
 		country: '',
+		caId: 1, // Default CA ID
 		tppRoles: [] // Added TPP Roles
 	};
 
@@ -15,9 +16,22 @@
 	];
 
 	let cas = [
-		{id: 1, label: 'CA1'}, 
-		{id: 2, label: 'CA2'}
+		{id: 1, name: 'CA1'}, 
+		{id: 2, name: 'CA2'}
 	];
+
+	async function fetchCas() {
+		try {
+			const response = await fetch('/api/cas');
+			if (!response.ok) {
+				throw new Error('Failed to fetch cas');
+			}
+			const data = await response.json();
+			cas = data;
+		} catch (error) {
+			console.error('Error fetching cas:', error);
+		}
+	}	
 
 	function handleCheckboxChange(event) {
 		const { value, checked } = event.target;
@@ -74,7 +88,7 @@
 			<label for="ca-select">Select Certificate Authority:</label>
 			<select id="ca-select" bind:value={certificateData.caId}>
 				{#each cas as ca}
-					<option value={ca.id} selected={ca.id === 1}>{ca.label}</option>
+					<option value={ca.id} selected={ca.id === 1}>{ca.name}</option>
 				{/each}
 			</select>
 		</div>

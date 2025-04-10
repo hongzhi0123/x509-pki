@@ -1,7 +1,7 @@
 import { Crypto } from "@peculiar/webcrypto";
 import * as x509 from "@peculiar/x509";
 import { createQCStatements, QCStatementsExtension } from "./qcStatement/qcStatementsExtension";
-import { getCAByCn } from "./ca";
+import { getCAByCn, getCAById } from "./ca";
 
 const crypto = new Crypto();
 x509.cryptoProvider.set(crypto); // Set crypto provider
@@ -79,7 +79,7 @@ export async function createCertificate(newCertReq, caCert) {
             notBefore: cert.notBefore,
             notAfter: cert.notAfter,
             status: 'Active',
-            ca: 'CA1',
+            ca: getCAById(newCertReq.caId).name,
             cert: certificatePEM,
             key: privateKeyPEM
         };

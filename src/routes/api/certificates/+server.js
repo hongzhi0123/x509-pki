@@ -1,6 +1,6 @@
 import { json } from "@sveltejs/kit";
 import { createCertificate } from "$lib/utils/certificate";
-import { getCAById } from "$lib/utils/ca";
+import { getCAById, getCASerial } from "$lib/utils/ca";
 import { DataStore } from "$lib/utils/dataStore";
 
 
@@ -15,7 +15,7 @@ export async function GET() {
 export async function POST({ request }) {
     const newCertReq = await request.json();
     const certificates = await certStore.getAll();
-    newCertReq.id = certificates.length + 1; // Assign a new ID
+    newCertReq.id = await getCASerial(newCertReq.caId);
 
     const caCert = getCAById(newCertReq.caId);
     if (!caCert) {
