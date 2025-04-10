@@ -1,11 +1,12 @@
 import { Crypto } from "@peculiar/webcrypto";
 import * as x509 from "@peculiar/x509";
 import { createQCStatements, QCStatementsExtension } from "./qcStatement/qcStatementsExtension";
+import { getCAByCn } from "./ca";
 
 const crypto = new Crypto();
 x509.cryptoProvider.set(crypto); // Set crypto provider
 
-export async function generateKey() {
+async function generateKey() {
     // Generate key pair for the new certificate
     const keyPair = await crypto.subtle.generateKey(
         {
@@ -87,4 +88,29 @@ export async function createCertificate(newCertReq, caCert) {
         console.error('Certificate creation error:', error);
         // res.status(500).json({ error: 'Certificate creation failed' });
     }
+}
+
+export function parseUploadedCerts(list) {
+    const certs = list.map((item) => {
+        const pem = item.cert;
+        const cert = new x509.X509Certificate(pem);
+        const subjectName = cert.subjectName;
+
+        return {
+            id: cert.serialNumber,
+            commonName: subjectName.getField('CN'),
+            organization: subjectName.getField('O'),
+            organizationUnit: subjectName.getField('OU'),
+            country: subjectName.getField('C'),
+            organizationId: subjectName.getField('2.5.4.97'),
+            notBefore: new Date(cert.notBefore),
+            notAfter: new Date(cert.notAfter),
+            status: 'Active',   // ToDo: Add status Active, Expired, Revoked
+            ca: getCAByCn(cert.issuerName.getField('CN')[0]).name,
+            cert: pem,
+            key: item.key
+        };
+    });
+
+    return certs;
 }

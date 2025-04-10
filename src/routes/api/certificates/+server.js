@@ -1,7 +1,7 @@
 import { json } from "@sveltejs/kit";
-import { createCertificate } from "$lib/utils/certificate.js";
-import { getCA } from "$lib/utils/ca.js";
-import { DataStore } from "$lib/utils/dataStore.js";
+import { createCertificate } from "$lib/utils/certificate";
+import { getCAById } from "$lib/utils/ca";
+import { DataStore } from "$lib/utils/dataStore";
 
 
 const certStore = new DataStore();
@@ -17,7 +17,10 @@ export async function POST({ request }) {
     const certificates = await certStore.getAll();
     newCertReq.id = certificates.length + 1; // Assign a new ID
 
-    const caCert = getCA();
+    const caCert = getCAById(newCertReq.caId);
+    if (!caCert) {
+        return json({ error: 'CA not found' }, { status: 404 });
+    }
     
     const newCertData = await createCertificate(newCertReq, caCert);
 

@@ -1,4 +1,5 @@
 import { fail } from '@sveltejs/kit';
+import { parseUploadedCerts } from '$lib/utils/certificate';
 import { writeFileSync } from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,13 +20,17 @@ export const actions = {
 
         const { fileToUpload } = formData as { fileToUpload: File };
 
-        const __dirname = path.dirname(fileURLToPath(import.meta.url));
-        const filepath = path.join(__dirname, '../../lib/utils/data/db.json');
-        // Write the file to the static folder
-        writeFileSync(filepath, Buffer.from(await fileToUpload.arrayBuffer()));
+        try {
+            const text = await fileToUpload.text();
+            const jsonObject = JSON.parse(text);
+            
+            const certList = parseUploadedCerts(jsonObject);
+            // ToDo: Reset the store with the new certs
+            // certStore.replaceAll(certList);
 
-        return {
-            success: true
-        };
+            return { success: true };
+        } catch (error) {
+            return fail(400, { error: 'Invalid JSON file' });
+        }
     }
-};
+}

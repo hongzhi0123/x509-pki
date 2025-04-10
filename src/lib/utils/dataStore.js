@@ -43,6 +43,22 @@ export class DataStore {
         this.db.data.items.push(item);
         await this.db.write();
     }
+
+    async replaceAll(newItems) {
+        // Ensure the newItems is an array
+        if (!Array.isArray(newItems)) {
+            throw new Error("Input must be an array");
+        }
+    
+        // Read the current database state
+        await this.db.read();
+    
+        // Replace the items array with the new array
+        this.db.data.items = newItems;
+    
+        // Write the updated data back to the JSON file
+        await this.db.write();
+    }
 }
 
 

@@ -95,6 +95,12 @@
 						<span class="sort-indicator">{sortDirection === 'asc' ? '▲' : '▼'}</span>
 					{/if}
 				</th>
+				<th class="sortable" onclick={() => handleSort('ca')}>
+					CA
+					{#if sortColumn === 'ca'}
+						<span class="sort-indicator">{sortDirection === 'asc' ? '▲' : '▼'}</span>
+					{/if}
+				</th>
 				<th class="sortable" onclick={() => handleSort('status')}>
 					Status
 					{#if sortColumn === 'status'}
@@ -112,6 +118,7 @@
 					<td>{certificate.organization}</td>
 					<td>{certificate.organizationId}</td>
 					<td>{certificate.country}</td>
+					<td>{certificate.ca}</td>
 					<td>{certificate.status}</td>
 					<td>
 						<button class="revoke-button" onclick={() => handleRevokeCertificate(certificate.id)}

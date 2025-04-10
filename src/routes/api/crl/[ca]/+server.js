@@ -1,11 +1,11 @@
 import { X509CrlGenerator } from '@peculiar/x509';
 import { Crypto } from "@peculiar/webcrypto";
-import { getCA } from '$lib/utils/ca';
+import { getCAById } from '$lib/utils/ca';
 
 const crypto = new Crypto();
 
 export async function GET() {
-  const caCert = getCA();
+  const caCert = getCAById(1);
 
   const aYearFromNow = new Date();
   aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);

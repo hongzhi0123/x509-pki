@@ -1,6 +1,4 @@
 <script>
-	// import { get } from 'svelte/store';
-
 	let certificateData = {
 		commonName: '',
 		organization: '',
@@ -16,12 +14,17 @@
 		{ value: 'PSP_IC', label: 'PSP_IC: Issuing of card-based payment instruments' }
 	];
 
+	let cas = [
+		{id: 1, label: 'CA1'}, 
+		{id: 2, label: 'CA2'}
+	];
+
 	function handleCheckboxChange(event) {
 		const { value, checked } = event.target;
 		if (checked) {
 			certificateData.tppRoles = [...certificateData.tppRoles, value];
 		} else {
-			certificateData.tppRoles = certificateData.tppRoles.filter(role => role !== value);
+			certificateData.tppRoles = certificateData.tppRoles.filter((role) => role !== value);
 		}
 	}
 
@@ -62,17 +65,29 @@
 		<div class="form-group">
 			<label for="organizationId">Organization Identifier:</label>
 			<input id="organizationId" bind:value={certificateData.organizationId} required />
-		</div>		
+		</div>
 		<div class="form-group">
 			<label for="country">Country:</label>
 			<input id="country" bind:value={certificateData.country} required />
 		</div>
-
+		<div class="form-group">
+			<label for="ca-select">Select Certificate Authority:</label>
+			<select id="ca-select" bind:value={certificateData.caId}>
+				{#each cas as ca}
+					<option value={ca.id} selected={ca.id === 1}>{ca.label}</option>
+				{/each}
+			</select>
+		</div>
 		<div class="form-group">
 			<label>TPP Roles:</label>
 			{#each tppRolesOptions as role}
 				<div class="checkbox-container">
-					<input type="checkbox" id={role.value} value={role.value} on:change={handleCheckboxChange} />
+					<input
+						type="checkbox"
+						id={role.value}
+						value={role.value}
+						on:change={handleCheckboxChange}
+					/>
 					<label for={role.value}>{role.label}</label>
 				</div>
 			{/each}
@@ -104,7 +119,7 @@
 		font-weight: bold;
 	}
 
-	form input[type="text"] {
+	form input[type='text'] {
 		width: calc(100% - 22px); /* Adjust width to align with checkbox */
 		padding: 8px;
 		box-sizing: border-box;
@@ -115,7 +130,7 @@
 		align-items: center;
 	}
 
-	.checkbox-container input[type="checkbox"] {
+	.checkbox-container input[type='checkbox'] {
 		width: auto;
 		margin-right: 10px;
 	}

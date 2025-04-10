@@ -1,20 +1,20 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { X509Certificate, cryptoProvider, PemConverter } from "@peculiar/x509";
 import { Crypto } from "@peculiar/webcrypto";
+import cas from '$lib/stores/cas.json';
 
 export class CACert {
+    id: number;
+    name: string;
+    cn: string;
     cert: X509Certificate;
     key: CryptoKey
 };
 
-let caCert: CACert = undefined;
+let caCerts: CACert[] = [];
+let caList = cas;
 
 const crypto = new Crypto();
 cryptoProvider.set(crypto); // Set crypto provider
-
-const filePathCert = join(process.cwd(), 'src', 'lib', 'stores', 'cas', 'ca1-cert.pem');
-const filePathKey = join(process.cwd(), 'src', 'lib', 'stores', 'cas', 'ca1-key.pem');
 
 async function convertPrivateKey(keyPem: string) {
     return crypto.subtle.importKey(
@@ -27,16 +27,22 @@ async function convertPrivateKey(keyPem: string) {
 }
 
 export async function loadCA() {
-    caCert = {
-        cert: new X509Certificate(
-            readFileSync(filePathCert, 'utf8')
-        ),
-        key: await convertPrivateKey(
-            readFileSync(filePathKey, 'utf8')
-        )
-    }
+    await caList.map(async ca => {
+        const cert = new X509Certificate(ca.cert);
+        caCerts.push({
+            id: ca.id,
+            name: ca.name,
+            cn: cert.subjectName.getField('CN')[0],
+            cert: cert,
+            key: await convertPrivateKey(ca.key)
+        })
+    });
 }
 
-export function getCA() : CACert {
-    return caCert;
+export function getCAById(id: number) : CACert {
+    return caCerts.find(ca => ca.id === id);
+}
+
+export function getCAByCn(cn: string) : CACert {
+    return caCerts.find(ca => ca.cn === cn);
 }
