@@ -28,7 +28,7 @@ export async function POST({ request }) {
     await certStore.add(newCertData);
 
     // Generate the PKCS#12 file
-    const p12Buffer = createP12(newCertData.cert, newCertData.key, 'changeit');
+    const p12Buffer = createP12(newCertData.cert, newCertData.key, 'changeit', [caCert.cert.toString("pem")]);
 
     return new Response(p12Buffer, {
         headers: {
