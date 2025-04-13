@@ -2,7 +2,7 @@ import { json } from "@sveltejs/kit";
 import { createCertificate } from "$lib/utils/certificate";
 import { getCAById, getCASerial } from "$lib/utils/ca";
 import { DataStore } from "$lib/utils/dataStore";
-
+import { createP12 } from "$lib/utils/p12Export";
 
 const certStore = new DataStore();
 // const certificates = await certStore.getAll();
@@ -27,5 +27,17 @@ export async function POST({ request }) {
     certificates.push(newCertData);
     await certStore.add(newCertData);
 
-    return json({ message: 'Certificate created successfully' });
+    // Generate the PKCS#12 file
+    const p12Buffer = createP12(newCertData.cert, newCertData.key, 'changeit');
+
+    return new Response(p12Buffer, {
+        headers: {
+            'Content-Type': 'application/x-pkcs12',
+            'Content-Disposition': 'attachment; filename="qwac-certificate.p12"',
+            'Content-Length': p12Buffer.length,
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+        }
+    });
 }

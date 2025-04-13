@@ -1,5 +1,5 @@
 <script>
-	let certificateData = {
+	const defaultCertificateData = {
 		commonName: '',
 		organization: '',
 		organizationId: '',
@@ -7,6 +7,8 @@
 		caId: 1, // Default CA ID
 		tppRoles: [] // Added TPP Roles
 	};
+
+	let certificateData = { ...defaultCertificateData }; // Initialize with default values
 
 	const tppRolesOptions = [
 		{ value: 'PSP_AS', label: 'PSP_AS: Account Servicing' },
@@ -56,8 +58,26 @@
 				throw new Error('Failed to create certificate');
 			}
 
-			const result = await response.json();
-			console.log('Certificate created successfully:', result);
+			// Convert the response to Blob
+			const blob = await response.blob();
+			// Create a URL for the Blob
+			const url = window.URL.createObjectURL(blob);
+			// Create a temporary link element to trigger the download
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'qwac-certificate.p12'; // Set the desired file name
+			document.body.appendChild(a);
+			a.click(); // Programmatically click the link to trigger the download
+			document.body.removeChild(a); // Clean up the DOM
+			window.URL.revokeObjectURL(url); // Release the Blob URL
+
+			certificateData = { ...defaultCertificateData }; // Reset the form data to default values
+
+			// Optionally, you can show a success message or redirect the user
+			// For example, you can use an alert or a toast notification
+			alert('QWAC Certificate created successfully!\n\nYou can find it in the Download folder.'); // Show success message
+
+			console.log('Certificate created successfully:');
 		} catch (error) {
 			console.error('Error creating certificate:', error);
 		}
@@ -96,13 +116,14 @@
 			<label>TPP Roles:</label>
 			{#each tppRolesOptions as role}
 				<div class="checkbox-container">
-					<input
-						type="checkbox"
-						id={role.value}
-						value={role.value}
-						on:change={handleCheckboxChange}
-					/>
-					<label for={role.value}>{role.label}</label>
+					<label>
+						<input
+							type="checkbox"
+							bind:group={certificateData.tppRoles}
+							value={role.value}
+						/>
+						{role.label}
+					</label>
 				</div>
 			{/each}
 		</div>
