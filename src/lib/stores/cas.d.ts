@@ -4,6 +4,7 @@ declare module '$lib/stores/cas.json' {
         name: string;
         cert: string;
         key: string;
+        root: string;
     }>;
     export default value;
 }

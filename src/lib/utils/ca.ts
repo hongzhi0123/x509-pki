@@ -11,7 +11,8 @@ export class CACert {
     name: string;
     cn: string;
     cert: X509Certificate;
-    key: CryptoKey
+    key: CryptoKey;
+    root: X509Certificate
 };
 
 let caCerts: CACert[] = [];
@@ -50,12 +51,14 @@ export async function getCASerial(id) {
 export async function loadCA() {
     await caList.map(async ca => {
         const cert = new X509Certificate(ca.cert);
+        const root = ca.root ? new X509Certificate(ca.root) : null;
         caCerts.push({
             id: ca.id,
             name: ca.name,
             cn: cert.subjectName.getField('CN')[0],
-            cert: cert,
-            key: await convertPrivateKey(ca.key)
+            cert,
+            key: await convertPrivateKey(ca.key),
+            root
         })
     });
 }
