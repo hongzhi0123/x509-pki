@@ -3,12 +3,17 @@ import { createCertificate } from "$lib/utils/certificate";
 import { getCAById, getCASerial } from "$lib/utils/ca";
 import { DataStore } from "$lib/utils/dataStore";
 import { createP12 } from "$lib/utils/p12Export";
+import { extractRoles } from "../../../lib/utils/qcStatement/qcStatementsExtension.js";
 
 const certStore = new DataStore();
 // const certificates = await certStore.getAll();
 
 export async function GET() {
     const certificates = await certStore.getAll();
+    certificates.forEach(cert => {
+        // Extract roles from the certificate using the QCStatementsExtension
+        cert.roles = extractRoles(cert.cert);
+    });
     return json(certificates);
 }
 

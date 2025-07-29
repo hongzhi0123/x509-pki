@@ -1,7 +1,7 @@
 <script>
   export let selectedCertificate;
   import { createEventDispatcher } from 'svelte';
-
+	
   const dispatch = createEventDispatcher();
 
   function close() {
@@ -54,5 +54,6 @@
     <p><strong>Status:</strong> {selectedCertificate.status}</p>
     <p><strong>Not Before:</strong> {selectedCertificate.notBefore}</p>
     <p><strong>Not After:</strong> {selectedCertificate.notAfter}</p>
+    <p><strong>Roles:</strong>{selectedCertificate.roles}</p>
   </div>
 </div>
