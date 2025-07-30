@@ -1,0 +1,7 @@
+[
+    {"id": 1, "caId": 1, "serialNumber": "4096", "revokedAt": "2025-07-30T12:00:00Z", "reason": 0},
+    {"id": 2, "caId": 1, "serialNumber": "4101", "revokedAt": "2025-07-30T12:00:00Z", "reason": 0},
+    {"id": 3, "caId": 1, "serialNumber": "4102", "revokedAt": "2025-07-30T12:00:00Z", "reason": 0},
+    {"id": 4, "caId": 2, "serialNumber": "4000", "revokedAt": "2025-07-30T12:00:00Z", "reason": 0},
+    {"id": 5, "caId": 2, "serialNumber": "4004", "revokedAt": "2025-07-30T12:00:00Z", "reason": 0}
+]
