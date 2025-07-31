@@ -1,5 +1,5 @@
-import { X509CrlGenerator, AuthorityKeyIdentifierExtension } from '@peculiar/x509';
-import { CRLNumber, id_ce_authorityKeyIdentifier, id_ce_cRLNumber, Extension } from '@peculiar/asn1-x509';
+import { X509CrlGenerator, AuthorityKeyIdentifierExtension, Extension } from '@peculiar/x509';
+import { CRLNumber, id_ce_authorityKeyIdentifier, id_ce_cRLNumber } from '@peculiar/asn1-x509';
 import { AsnConvert } from '@peculiar/asn1-schema';
 // import { Integer }   from '@peculiar/asn1-schema';
 import { Crypto } from "@peculiar/webcrypto";
@@ -10,11 +10,11 @@ const crypto = new Crypto();
 
 // Helper: Create DER-encoded Extension from type and value
 function createExtension(oid, critical, value) {
-  const ext = new Extension();
-  ext.extnId = oid;
-  ext.critical = critical;
-  ext.extnValue = AsnConvert.serialize(value); // Must be OCTET STRING containing DER of inner value
-  return AsnConvert.serialize(ext); // Returns full DER of Extension
+  const ext = new Extension(oid, critical, value);
+  // ext.type = oid;
+  // ext.critical = critical;
+  // ext.value = value; //AsnConvert.serialize(value); // Must be OCTET STRING containing DER of inner value
+  return ext; //AsnConvert.serialize(ext); // Returns full DER of Extension
 }
 
 export async function GET({ params }) {
@@ -41,19 +41,19 @@ export async function GET({ params }) {
       // 2. CRL number – use the helper
       // { type: id_ce_cRLNumber,             critical: false, rawData: AsnSerializer.serialize(new Integer(1)) }    
       {
-        type: id_ce_authorityKeyIdentifier,
-        critical: false,
+        // type: id_ce_authorityKeyIdentifier,
+        // critical: false,
         rawData: caCert.cert.extensions.find(ext => ext.type === id_ce_authorityKeyIdentifier)?.rawData || null
       },
       // {
-      //   type: id_ce_cRLNumber,
-      //   critical: false,
-      //   // value: new CRLNumber(1)
-      //   rawData: createExtension(
-      //     id_ce_cRLNumber,
-      //     false,
-      //     new CRLNumber(1) // Increment as needed
-      //   )
+        // type: id_ce_cRLNumber,
+        // critical: false,
+        // value: new CRLNumber(1)
+        new Extension(
+          id_ce_cRLNumber,
+          false,
+          new Uint8Array([0x02, 0x01, 1]) // Integer 1, //new CRLNumber(1) // Increment as needed
+        )
       // }
     ],
     entries: 
