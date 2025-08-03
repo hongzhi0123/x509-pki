@@ -8,22 +8,18 @@ import revokedCerts from '$lib/stores/revoked.json';
 
 const crypto = new Crypto();
 
-// Helper: Create DER-encoded Extension from type and value
-function createExtension(oid, critical, value) {
-  const ext = new Extension(oid, critical, value);
-  // ext.type = oid;
-  // ext.critical = critical;
-  // ext.value = value; //AsnConvert.serialize(value); // Must be OCTET STRING containing DER of inner value
-  return ext; //AsnConvert.serialize(ext); // Returns full DER of Extension
-}
-
 export async function GET({ params }) {
+  console.log(`GET /api/crl/${params.ca}`);
+
   const caId = Number(params.ca);
   if (isNaN(caId) || caId <= 0) {
     return new Response('Invalid CA ID', { status: 400 });
   }
   
   const caCert = getCAById(caId);
+  if (!caCert) {
+    return new Response('CA not found', { status: 404 });
+  }
 
   const aYearFromNow = new Date();
   aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);

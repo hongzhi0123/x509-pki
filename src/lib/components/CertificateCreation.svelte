@@ -5,6 +5,7 @@
 		organizationId: '',
 		country: '',
 		caId: 1, // Default CA ID
+		revocation: ['CRL', 'OCSP'], // Default revocation options
 		tppRoles: [] // Added TPP Roles
 	};
 
@@ -15,6 +16,11 @@
 		{ value: 'PSP_PI', label: 'PSP_PI: Payment Initiation' },
 		{ value: 'PSP_AI', label: 'PSP_AI: Account Information' },
 		{ value: 'PSP_IC', label: 'PSP_IC: Issuing of card-based payment instruments' }
+	];
+
+	const revocationOptions = [
+		{ value: 'CRL', label: 'CRL' },
+		{ value: 'OCSP', label: 'OCSP' }
 	];
 
 	let cas = [
@@ -111,6 +117,21 @@
 					<option value={ca.id} selected={ca.id === 1}>{ca.name}</option>
 				{/each}
 			</select>
+		</div>
+		<div class="form-group">
+			<label>Revocation:</label>
+			{#each revocationOptions as rev}
+				<div class="checkbox-container">
+					<label>
+						<input
+							type="checkbox"
+							bind:group={certificateData.revocation}
+							value={rev.value}
+						/>
+						{rev.label}
+					</label>
+				</div>
+			{/each}
 		</div>
 		<div class="form-group">
 			<label>TPP Roles:</label>

@@ -35,27 +35,7 @@ export async function createCertificate(newCertReq, caCert) {
             publicKey: keyPair.publicKey,
             signingKey: caCert.key,
             issuer: caCert.cert.subject, // Set issuer to CA's subject
-            extensions: [
-                // Basic Constraints (if needed)
-                new x509.BasicConstraintsExtension(false, undefined, true),
-
-                // CRL Distribution Points
-                new x509.CRLDistributionPointsExtension(["http://localhost:5173/api/crl/1"]),
-
-                // OCSP (Authority Information Access)
-                new x509.AuthorityInfoAccessExtension({ ocsp: "http://example.com/ocsp" }),
-
-                // QCStatements (custom extension)
-                // new Psd2RolesExtension({rolesOfPSP: ["PSP_AI", "PSP_PI"], NCAId: "PSDDE_XXX", NCAName: "BAFIN"}),
-                new QCStatementsExtension(createQCStatements(newCertReq.tppRoles)),
-
-                // Authority Key Identifier (link to CA)
-                new x509.AuthorityKeyIdentifierExtension(
-                    (
-                        caCert.cert.getExtension(x509.SubjectKeyIdentifierExtension)
-                    )?.keyId,
-                ),
-            ]
+            extensions: createExtensions(newCertReq, caCert),
         });
 
         const certificatePEM = cert.toString("pem");
@@ -113,4 +93,39 @@ export function parseUploadedCerts(list) {
     });
 
     return certs;
+}
+
+function createExtensions(newCertReq, caCert) {
+    // Create extensions for the new certificate
+    if (!newCertReq.revocation || !caCert) {
+        throw new Error("Invalid request or CA certificate not found");
+    }
+
+    var extensions = [];
+    // Basic Constraints (if needed)
+    extensions.push(new x509.BasicConstraintsExtension(false, undefined, true));
+
+    extensions.push(
+        // Authority Key Identifier (link to CA)
+        new x509.AuthorityKeyIdentifierExtension(
+            (
+                caCert.cert.getExtension(x509.SubjectKeyIdentifierExtension)
+            )?.keyId,
+        )
+    );
+
+    // Check if TPP roles are provided and add Basic Constraints
+    extensions.push(new QCStatementsExtension(createQCStatements(newCertReq.tppRoles)));
+
+    // Add CRL Distribution Points if needed
+    if (newCertReq.revocation.includes("CRL")) {
+        extensions.push(
+            new x509.CRLDistributionPointsExtension([`http://localhost:5173/api/crl/${caCert.id}`])
+        );
+    }
+
+    // Add OCSP if needed
+    extensions.push(new x509.AuthorityInfoAccessExtension({ ocsp: `http://localhost:5173/api/ocsp/${caCert.id}` }));
+
+    return extensions;
 }
