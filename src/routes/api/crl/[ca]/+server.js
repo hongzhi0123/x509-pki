@@ -1,5 +1,5 @@
 import { X509CrlGenerator, AuthorityKeyIdentifierExtension, Extension } from '@peculiar/x509';
-import { CRLNumber, id_ce_authorityKeyIdentifier, id_ce_cRLNumber } from '@peculiar/asn1-x509';
+import { CRLNumber, id_ce_subjectKeyIdentifier, id_ce_cRLNumber } from '@peculiar/asn1-x509';
 import { AsnConvert } from '@peculiar/asn1-schema';
 // import { Integer }   from '@peculiar/asn1-schema';
 import { Crypto } from "@peculiar/webcrypto";
@@ -31,26 +31,8 @@ export async function GET({ params }) {
     signingKey: caCert.key,
     signingAlgorithm: caCert.cert.publicKey.algorithm,
     extensions: [
-      // 1. authorityKeyIdentifier – use the helper
-      // await AuthorityKeyIdentifierExtension.create(caCert.cert, false),
-
-      // 2. CRL number – use the helper
-      // { type: id_ce_cRLNumber,             critical: false, rawData: AsnSerializer.serialize(new Integer(1)) }    
-      {
-        // type: id_ce_authorityKeyIdentifier,
-        // critical: false,
-        rawData: caCert.cert.extensions.find(ext => ext.type === id_ce_authorityKeyIdentifier)?.rawData || null
-      },
-      // {
-        // type: id_ce_cRLNumber,
-        // critical: false,
-        // value: new CRLNumber(1)
-        new Extension(
-          id_ce_cRLNumber,
-          false,
-          new Uint8Array([0x02, 0x01, 1]) // Integer 1, //new CRLNumber(1) // Increment as needed
-        )
-      // }
+      new AuthorityKeyIdentifierExtension(caCert.cert.extensions.find(ext => ext.type === id_ce_subjectKeyIdentifier)?.keyId || null),
+      new Extension(id_ce_cRLNumber, false, AsnConvert.serialize(new CRLNumber(1))) // Increment as needed
     ],
     entries: 
       revokedCerts.filter(r => r.caId === caId)
