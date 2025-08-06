@@ -12,7 +12,9 @@ export async function GET() {
     const certificates = await certStore.getAll();
     certificates.forEach(cert => {
         // Extract roles from the certificate using the QCStatementsExtension
-        cert.roles = extractRoles(cert.cert);
+        if (cert != null && cert.cert) {
+            cert.roles = extractRoles(cert.cert);
+        }
     });
     return json(certificates);
 }
