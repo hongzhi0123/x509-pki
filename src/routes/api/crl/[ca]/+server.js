@@ -1,10 +1,10 @@
 import { X509CrlGenerator, AuthorityKeyIdentifierExtension, Extension } from '@peculiar/x509';
 import { CRLNumber, id_ce_subjectKeyIdentifier, id_ce_cRLNumber } from '@peculiar/asn1-x509';
 import { AsnConvert } from '@peculiar/asn1-schema';
-// import { Integer }   from '@peculiar/asn1-schema';
 import { Crypto } from "@peculiar/webcrypto";
 import { getCAById } from '$lib/utils/ca';
 import revokedCerts from '$lib/stores/revoked.json';
+import { getCRLNumberById } from '$lib/utils/ca.js';
 
 const crypto = new Crypto();
 
@@ -32,7 +32,7 @@ export async function GET({ params }) {
     signingAlgorithm: caCert.cert.publicKey.algorithm,
     extensions: [
       new AuthorityKeyIdentifierExtension(caCert.cert.extensions.find(ext => ext.type === id_ce_subjectKeyIdentifier)?.keyId || null),
-      new Extension(id_ce_cRLNumber, false, AsnConvert.serialize(new CRLNumber(1))) // Increment as needed
+      new Extension(id_ce_cRLNumber, false, AsnConvert.serialize(new CRLNumber(await getCRLNumberById(caId)))) // Increment as needed
     ],
     entries: 
       revokedCerts.filter(r => r.caId === caId)

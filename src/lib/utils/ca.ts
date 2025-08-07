@@ -41,11 +41,18 @@ export async function loadCASerial() {
     await serialDB.read();
 }
 
-export async function getCASerial(id) {
+export async function getSerialById(id) {
     const item = serialDB.data.cas.find(item => item.id === id);
     item.serial++;
     await serialDB.write();
     return item.serial;
+}
+
+export async function getCRLNumberById(id) {
+    const item = serialDB.data.cas.find(item => item.id === id);
+    item.crlNumber++;
+    await serialDB.write();
+    return item.crlNumber;
 }
 
 export async function loadCA() {

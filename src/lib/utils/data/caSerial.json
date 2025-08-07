@@ -2,11 +2,13 @@
   "cas": [
     {
       "id": 1,
-      "serial": 4106
+      "serial": 4109,
+      "crlNumber": 5
     },
     {
       "id": 2,
-      "serial": 4103
+      "serial": 4103,
+      "crlNumber": 1
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { json } from "@sveltejs/kit";
 import { createCertificate } from "$lib/utils/certificate";
-import { getCAById, getCASerial } from "$lib/utils/ca";
+import { getCAById, getSerialById } from "$lib/utils/ca";
 import { DataStore } from "$lib/utils/dataStore";
 import { createP12 } from "$lib/utils/p12Export";
 import { extractRoles } from "../../../lib/utils/qcStatement/qcStatementsExtension.js";
@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST({ request }) {
     const newCertReq = await request.json();
     const certificates = await certStore.getAll();
-    newCertReq.id = await getCASerial(newCertReq.caId);
+    newCertReq.id = await getSerialById(newCertReq.caId);
 
     const caCert = getCAById(newCertReq.caId);
     if (!caCert) {
